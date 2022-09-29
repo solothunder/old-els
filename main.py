@@ -85,3 +85,4 @@ if __name__ == '__main__':
     if yes_no_input():
         print('OK Start')
         Event().wait(delay)
+        # res = subprocess.run(".\users\user\document\lllll.exe", stdout=subprocess.PIPE, shell=True, encoding="shift-jis")
