@@ -3,9 +3,13 @@ import platform
 import os
 import sys
 import subprocess
+import datetime
+import socket
+import shutil
+import ctypes
 # 下準備 >>>>↓↓↓↓↓↓
 # バージョン
-elsversion = "1.0"
+elsversion = "1.3"
 # 遅延速度
 delay = 1
 delayt = 1.7
@@ -21,9 +25,25 @@ Event().wait(delay)
 # OS判別
 osprat = platform.system()
 print("Your Execution Operating System (OS) is" , osprat , "System")
+# Windowsだったら解像度出すよー
+if osprat == "Windows":
+    user32 = ctypes.windll.user32
+    screensize = user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)
+    print ("Screensize", screensize,"\n")
+    Event().wait(delay)
+
+dt_now = datetime.datetime.now()
+print(dt_now.strftime('%Y/%m/%d %H:%M:%S'))
+
+# 残り容量確認
+print('-------------------- \nHDD - SSD Check')
+total, used, free = shutil.disk_usage("/")
+
+print("Total: %d GB" % (total // (2**30)))
+print("Used: %d GB" % (used // (2**30)))
+print("Free: %d GB" % (free // (2**30)),"\n")
 
 Event().wait(delayt)
-
 print('ELS Start')
 Event().wait(delayt)
 
@@ -32,20 +52,26 @@ print('-------------------- \nNetWork')
 Event().wait(delay)
 host = "google.com"
 print("google.com")
-res = subprocess.run(["ping",host,"-n","2", "-w", "300"],stdout=subprocess.PIPE)
+print("...")
+res = subprocess.run(["ping",host,"-n","8", "-w", "300"],stdout=subprocess.PIPE)
 # netkekka = "Manual Pass | \n--------------------"
 # print(netkekka)
 if res.returncode == 0 :
-    print("...")
-    Event().wait(delay)
     print("OK |")
 else:
-    print("...")
-    Event().wait(delay)
     print("Error (Stops the program after 15 seconds) |")
     Event().wait("15")
     sys.exit()
 print("-----------------------------")
+
+# プライベートIP　確認
+print("IP (Private)")
+Event().wait(delayaa)
+print("...")
+
+s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+s.connect(("8.8.8.8", 80))
+print(s.getsockname()[0])
 
 Event().wait(delay)
 
