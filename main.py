@@ -16,12 +16,15 @@ inifile.read(r'./config/config.ini', 'UTF-8')
 def wait(time):
     Event().wait(int(time))
 
-def Windows():
-    # Windowsだったら解像度出すよー
-    user32 = ctypes.windll.user32
-    screensize = user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)
-    print ("Screensize", screensize,"\n")
-    wait(1)
+def check_platform():
+    if platform.system() == "Windows":
+        # Windowsだったら解像度出すよー
+        user32 = ctypes.windll.user32
+        screensize = user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)
+        print ("Screensize", screensize,"\n")
+        wait(1)
+    else:
+        pass
 
 # 残り容量確認
 def check_remaning_capacity():
@@ -32,7 +35,7 @@ def check_remaning_capacity():
     print("Free: %d GB" % (free // (2**30)),"\n")
 
 # Pingでインターネットつながってるか？
-def net_ping(host_moji,count_count):
+def check_ping(host_moji,count_count):
     print('-------------------- \nNetWork')
     if inifile.get('switch', 'net') == "1":
         wait(1)
@@ -60,7 +63,7 @@ def net_ping(host_moji,count_count):
         pass
 
 # プライベートIP　確認
-def ip(host, port):
+def check_private_ip(host, port):
     if inifile.get('switch', 'netip') == "1":
         print("IP (Private)")
         wait(0.3)
@@ -73,7 +76,7 @@ def ip(host, port):
         pass
 
 # ファイル確認
-def file(path):
+def check_file_isfile(path):
     is_file = os.path.isfile(str(path))
     if is_file:
         print(f"{str(path)}")
@@ -103,9 +106,7 @@ wait(1)
 print("ELS (Error Logs System) Python Edition  Version",elsversion)
 wait(1)
 
-if platform.system() == "Windows":
-    # Windowsだったら解像度出すよー
-    Windows()
+
 
 # 残り容量確認
 check_remaning_capacity()
@@ -115,17 +116,17 @@ print('ELS Start')
 wait(1.7)
 
 # Pingでインターネットつながってるか？
-net_ping(inifile.get('settings', 'pinghost'),inifile.get('settings', 'pingtime'))
+check_ping(inifile.get('settings', 'pinghost'),inifile.get('settings', 'pingtime'))
 
 # プライベートIP　確認
-ip(inifile.get('settings', 'iptesthost'), inifile.get('settings', 'iptestport'))
+check_private_ip(inifile.get('settings', 'iptesthost'), inifile.get('settings', 'iptestport'))
 
 # ファイル確認（pathの変数のところにファイル名（パスも）書いてね）
 path = ['addfiles/a.txt', 'addfiles/b.txt', 'addfiles/c.txt']
 if inifile.get('switch', 'file') == "1":
     print('-------------------- \nFile')
     for pathcount in path:
-        file(pathcount)
+        check_file_isfile(pathcount)
     print('--------------------')
 else:
     pass
