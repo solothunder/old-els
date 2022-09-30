@@ -101,7 +101,7 @@ def yes_no_input():
         elif choice in ['n', 'no']:
             sys.exit()
 
-elsversion = "2.1"
+elsversion = "2.1.5"
 wait(1)
 print("ELS (Error Logs System) Python Edition  Version",elsversion)
 wait(1)
