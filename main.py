@@ -13,6 +13,20 @@ import ctypes
 inifile = configparser.ConfigParser()
 inifile.read(r'./config/config.ini', 'UTF-8')
 
+if platform.system() == "Windows":
+    ENABLE_PROCESSED_OUTPUT = 0x0001
+    ENABLE_WRAP_AT_EOL_OUTPUT = 0x0002
+    ENABLE_VIRTUAL_TERMINAL_PROCESSING = 0x0004
+    MODE = ENABLE_PROCESSED_OUTPUT + ENABLE_WRAP_AT_EOL_OUTPUT + ENABLE_VIRTUAL_TERMINAL_PROCESSING
+
+    kernel32 = ctypes.windll.kernel32
+    handle = kernel32.GetStdHandle(-11)
+    kernel32.SetConsoleMode(handle, MODE)
+
+    GREEN = "\033[32m"
+    RED = '\033[31m'
+    END = '\033[0m'
+
 # 遅延関数化
 def wait(time):
     Event().wait(int(time))
@@ -36,15 +50,22 @@ def check_ping(host_moji,count_count):
         print("...")
         if platform.system() == "Windows":
             res = subprocess.run(["ping",host_moji,"-n",count_count, "-w", "300"],stdout=subprocess.PIPE)
+            if res.returncode == 0 :
+                print(GREEN + "OK |" + END)
+                wait(1.7)
+            else:
+                print(RED + "Error (Stops the program after 15 seconds) |" + END)
+                wait(15)
+                sys.exit()
         else:
             res = subprocess.run(["ping",host_moji,"-c",count_count],stdout=subprocess.PIPE)
-        if res.returncode == 0 :
-            print("OK |")
-            wait(1.7)
-        else:
-            print("Error (Stops the program after 15 seconds) |")
-            wait(15)
-            sys.exit()
+            if res.returncode == 0 :
+                print("OK |")
+                wait(1.7)
+            else:
+                print("Error (Stops the program after 15 seconds) |")
+                wait(15)
+                sys.exit()
         print("--------------------")
     if inifile.get('switch', 'net') == "2":
         netkekka = "Manual Pass | \n--------------------"
@@ -70,17 +91,6 @@ def check_file_isfile(path):
     is_file = os.path.isfile(str(path))
     if platform.system() == "Windows":
         if is_file:
-            ENABLE_PROCESSED_OUTPUT = 0x0001
-            ENABLE_WRAP_AT_EOL_OUTPUT = 0x0002
-            ENABLE_VIRTUAL_TERMINAL_PROCESSING = 0x0004
-            MODE = ENABLE_PROCESSED_OUTPUT + ENABLE_WRAP_AT_EOL_OUTPUT + ENABLE_VIRTUAL_TERMINAL_PROCESSING
-
-            kernel32 = ctypes.windll.kernel32
-            handle = kernel32.GetStdHandle(-11)
-            kernel32.SetConsoleMode(handle, MODE)
-            GREEN = "\033[32m"
-            RED = '\033[31m'
-            END = '\033[0m'
             print("\r",pathcount,GREEN + " ... OK" + END, end="")
             time.sleep(0.5)
         else:
@@ -104,7 +114,7 @@ def yes_no_input():
         elif choice in ['n', 'no']:
             sys.exit()
 
-elsversion = "2.1.5"
+elsversion = "2.2.5"
 wait(1)
 print("ELS (Error Logs System) Python Edition  Version",elsversion)
 wait(1)
