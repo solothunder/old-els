@@ -5,8 +5,9 @@ import platform
 import socket
 import subprocess
 import sys
-import shutil
 from threading import Event
+import time
+import ctypes
 
 # 設定ファイル系
 inifile = configparser.ConfigParser()
@@ -26,14 +27,6 @@ def check_platform():
     else:
         pass
 
-# 残り容量確認
-def check_remaning_capacity():
-    print('-------------------- \nHDD - SSD Check')
-    total, used, free = shutil.disk_usage("/")
-    print("Total: %d GB" % (total // (230)))
-    print("Used: %d GB" % (used // (230)))
-    print("Free: %d GB" % (free // (2**30)),"\n")
-
 # Pingでインターネットつながってるか？
 def check_ping(host_moji,count_count):
     print('-------------------- \nNetWork')
@@ -49,13 +42,10 @@ def check_ping(host_moji,count_count):
             print("OK |")
             wait(1.7)
         else:
-            print("                                                                                                                                                     ")
+            print("Error (Stops the program after 15 seconds) |")
             wait(15)
             sys.exit()
         print("--------------------")
-    if inifile.get('switch', 'net') == "2":
-        netkekka = "Manual Pass | \n--------------------"
-        print(netkekka)
     if inifile.get('switch', 'net') == "2":
         netkekka = "Manual Pass | \n--------------------"
         print(netkekka)
@@ -78,20 +68,33 @@ def check_private_ip(host, port):
 # ファイル確認
 def check_file_isfile(path):
     is_file = os.path.isfile(str(path))
-    if is_file:
-        print(f"- {str(path)}")
-        wait(0.3)
-        print("...")
-        wait(0.3)
-        print("OK |")
+    if platform.system() == "Windows":
+        if is_file:
+            ENABLE_PROCESSED_OUTPUT = 0x0001
+            ENABLE_WRAP_AT_EOL_OUTPUT = 0x0002
+            ENABLE_VIRTUAL_TERMINAL_PROCESSING = 0x0004
+            MODE = ENABLE_PROCESSED_OUTPUT + ENABLE_WRAP_AT_EOL_OUTPUT + ENABLE_VIRTUAL_TERMINAL_PROCESSING
+
+            kernel32 = ctypes.windll.kernel32
+            handle = kernel32.GetStdHandle(-11)
+            kernel32.SetConsoleMode(handle, MODE)
+            GREEN = "\033[32m"
+            RED = '\033[31m'
+            END = '\033[0m'
+            print("\r",pathcount,GREEN + " ... OK" + END, end="")
+            time.sleep(0.5)
+        else:
+            print("\r",pathcount,RED + " .......... Error (Stops the program after 15 seconds" + END, end="")
+            wait(15)
+            sys.exit()
     else:
-        print(f"- {str(path)}")
-        wait(0.3)
-        print("..........")
-        wait(0.3)
-        print("Error (Stops the program after 15 seconds) |")
-        wait(15)
-        sys.exit()
+        if is_file:
+            print("\r{0} ... OK".format(pathcount), end="")
+            time.sleep(0.5)
+        else:
+            print("\r{0} ... Error (Stops the program after 15 seconds)".format(pathcount), end="")
+            wait(15)
+            sys.exit()
 
 def yes_no_input():
     while True:
@@ -106,10 +109,7 @@ wait(1)
 print("ELS (Error Logs System) Python Edition  Version",elsversion)
 wait(1)
 
-
-
 # 残り容量確認
-check_remaning_capacity()
 
 wait(1.7)
 print('ELS Start')
@@ -124,11 +124,10 @@ check_private_ip(inifile.get('settings', 'iptesthost'), inifile.get('settings', 
 # ファイル確認（pathの変数のところにファイル名（パスも）書いてね）
 path = ['addfiles/a.txt', 'addfiles/b.txt', 'addfiles/c.txt']
 if inifile.get('switch', 'file') == "1":
-    print('-------------------- \nFile Check')
-    print('-------------------- \nsrc File')
+    print('-------------------- \nFile')
     for pathcount in path:
         check_file_isfile(pathcount)
-    print('--------------------')
+    print('\n--------------------')
 else:
     pass
 
