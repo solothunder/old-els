@@ -49,7 +49,7 @@ def check_ping(host_moji,count_count):
             print("OK |")
             wait(1.7)
         else:
-            print("Error (Stops the program after 15 seconds) |")
+            print("                                                                                                                                                     ")
             wait(15)
             sys.exit()
         print("--------------------")
@@ -79,13 +79,13 @@ def check_private_ip(host, port):
 def check_file_isfile(path):
     is_file = os.path.isfile(str(path))
     if is_file:
-        print(f"{str(path)}")
+        print(f"- {str(path)}")
         wait(0.3)
         print("...")
         wait(0.3)
         print("OK |")
     else:
-        print(f"{str(path)}")
+        print(f"- {str(path)}")
         wait(0.3)
         print("..........")
         wait(0.3)
@@ -124,7 +124,8 @@ check_private_ip(inifile.get('settings', 'iptesthost'), inifile.get('settings', 
 # ファイル確認（pathの変数のところにファイル名（パスも）書いてね）
 path = ['addfiles/a.txt', 'addfiles/b.txt', 'addfiles/c.txt']
 if inifile.get('switch', 'file') == "1":
-    print('-------------------- \nFile')
+    print('-------------------- \nFile Check')
+    print('-------------------- \nsrc File')
     for pathcount in path:
         check_file_isfile(pathcount)
     print('--------------------')
