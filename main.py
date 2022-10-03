@@ -25,6 +25,7 @@ if platform.system() == "Windows":
 
     GREEN = "\033[32m"
     RED = '\033[31m'
+    Blue = '\033[34m'
     END = '\033[0m'
 
 # 遅延関数化
@@ -33,12 +34,14 @@ def wait(time):
 
 def check_platform():
     if platform.system() == "Windows":
+        print("Your PC OS [",Blue + "Windows" + END,"]")
         # Windowsだったら解像度出すよー
         user32 = ctypes.windll.user32
         screensize = user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)
         print ("Screensize", screensize,"\n")
         wait(1)
     else:
+        print("Your PC OS [",platform.system(),"]")
         pass
 
 # Pingでインターネットつながってるか？
@@ -91,10 +94,10 @@ def check_file_isfile(path):
     is_file = os.path.isfile(str(path))
     if platform.system() == "Windows":
         if is_file:
-            print("\r",pathcount,GREEN + " ... OK" + END, end="")
+            print("\r", pathcount, " ... ",GREEN + "OK" + END, end="")
             time.sleep(0.5)
         else:
-            print("\r",pathcount,RED + " .......... Error (Stops the program after 15 seconds" + END, end="")
+            print("\r", pathcount, " .......... ",RED + "Error (Stops the program after 15 seconds" + END, end="")
             wait(15)
             sys.exit()
     else:
@@ -114,12 +117,12 @@ def yes_no_input():
         elif choice in ['n', 'no']:
             sys.exit()
 
-elsversion = "2.2.5"
+elsversion = "2.3"
 wait(1)
 print("ELS (Error Logs System) Python Edition  Version",elsversion)
 wait(1)
-
-# 残り容量確認
+check_platform()
+wait(2)
 
 wait(1.7)
 print('ELS Start')
