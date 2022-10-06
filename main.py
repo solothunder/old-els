@@ -8,7 +8,6 @@ import sys
 from threading import Event
 import time
 import ctypes
-
 # 設定ファイル系
 inifile = configparser.ConfigParser()
 inifile.read(r'./config/config.ini', 'UTF-8')
